@@ -11,6 +11,13 @@
 #include <curl/curl.h>
 #include "gumbo.h"
 
+// Function to store webpage content fetched by libcurl
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* output) {
+    size_t totalSize = size * nmemb;
+    output->append((char*)contents, totalSize);
+    return totalSize;
+}
+
 // Function to fetch HTML content of a URL using libcurl
 string fetchPageContent(const string& url) {
     CURL* curl = curl_easy_init();
