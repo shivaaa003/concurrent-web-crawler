@@ -11,6 +11,21 @@
 #include <curl/curl.h>
 #include "gumbo.h"
 
+void SerialCrawler(string url, CrawlerState& state) {
+    if (state.visited[url]) return;
+
+    state.visited[url] = true;
+    cout << "Fetching: " << url << endl;
+
+    string html = fetchPageContent(url);
+    if (html.empty()) return;
+
+    vector<string> links = getLinksFromHTML(html);
+    for (const auto& link : links) {
+        SerialCrawler(link, state);
+    }
+}
+
 int main() {
     curl_global_init(CURL_GLOBAL_ALL);
 
