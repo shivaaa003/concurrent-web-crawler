@@ -27,6 +27,19 @@ string fetchPageContent(const string& url) {
 
     return (res == CURLE_OK) ? pageContent : "";
 }
+
+// Function to parse HTML and extract links
+vector<string> getLinksFromHTML(const string& html) {
+    vector<string> links;
+    GumboOutput* output = gumbo_parse(html.c_str());
+
+    if (output) {
+        extractLinks(output->root, links);
+        gumbo_destroy_output(&kGumboDefaultOptions, output);
+    }
+    return links;
+}
+
 // serial crawler
 void SerialCrawler(string url, CrawlerState& state) {
     if (state.visited[url]) return;
