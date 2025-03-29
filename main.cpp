@@ -1,15 +1,14 @@
 #include <iostream>
-#include <string>
+#include <unordered_map>
 #include <vector>
-#include <unordered_set>
-#include <queue>
+#include <string>
 #include <mutex>
 #include <thread>
-#include <condition_variable>
-#include <atomic>
-#include <chrono>
+#include <queue>
 #include <curl/curl.h>
-#include "gumbo.h"
+#include <gumbo.h>
+
+using namespace std;
 
 // Function to store webpage content fetched by libcurl
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* output) {
@@ -70,7 +69,7 @@ struct CrawlerState {
     mutex mtx;
 };
 
-// serial crawler
+// Serial Web Crawler (Single Threaded)
 void SerialCrawler(string url, CrawlerState& state) {
     if (state.visited[url]) return;
 
@@ -110,7 +109,7 @@ void ConcurrentCrawler(string url, CrawlerState& state) {
     }
 }
 
-
+// Main function
 int main() {
     curl_global_init(CURL_GLOBAL_ALL);
 
