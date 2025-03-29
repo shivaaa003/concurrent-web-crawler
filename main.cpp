@@ -11,6 +11,23 @@
 #include <curl/curl.h>
 #include "gumbo.h"
 
+// Function to fetch HTML content of a URL using libcurl
+string fetchPageContent(const string& url) {
+    CURL* curl = curl_easy_init();
+    if (!curl) return "";
+
+    string pageContent;
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &pageContent);
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+    CURLcode res = curl_easy_perform(curl);
+    curl_easy_cleanup(curl);
+
+    return (res == CURLE_OK) ? pageContent : "";
+}
+// serial crawler
 void SerialCrawler(string url, CrawlerState& state) {
     if (state.visited[url]) return;
 
