@@ -73,6 +73,31 @@ void SerialCrawler(string url, CrawlerState& state) {
     }
 }
 
+// Concurrent Web Crawler (Multithreaded)
+void ConcurrentCrawler(string url, CrawlerState& state) {
+    {
+        lock_guard<mutex> lock(state.mtx);
+        if (state.visited[url]) return;
+        state.visited[url] = true;
+    }
+
+    cout << "Fetching: " << url << endl;
+    string html = fetchPageContent(url);
+    if (html.empty()) return;
+
+    vector<string> links = getLinksFromHTML(html);
+    vector<thread> threads;
+
+    for (const auto& link : links) {
+        threads.emplace_back(ConcurrentCrawler, link, ref(state));
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+}
+
+
 int main() {
     curl_global_init(CURL_GLOBAL_ALL);
 
