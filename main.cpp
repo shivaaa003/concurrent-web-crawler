@@ -57,6 +57,12 @@ vector<string> getLinksFromHTML(const string& html) {
     return links;
 }
 
+// Shared state with mutex for thread safety
+struct CrawlerState {
+    unordered_map<string, bool> visited;
+    mutex mtx;
+};
+
 // serial crawler
 void SerialCrawler(string url, CrawlerState& state) {
     if (state.visited[url]) return;
